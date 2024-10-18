@@ -6,6 +6,8 @@ describe('throttledGetDataFromApi', () => {
     let axiosCreateSpy: jest.SpyInstance;
     let axiosInstance: Partial<AxiosInstance>;
     const responseData = { data: 'mockedData' };
+    const relativePath = '/posts';
+
     beforeAll(() => {
       jest.useFakeTimers();
     });
@@ -29,7 +31,6 @@ describe('throttledGetDataFromApi', () => {
     });
 
     test('should create instance with provided base url', async () => {
-      const relativePath = '/posts';
       await throttledGetDataFromApi(relativePath);
       expect(axiosCreateSpy).toHaveBeenCalledWith({
         baseURL: 'https://jsonplaceholder.typicode.com',
@@ -37,7 +38,6 @@ describe('throttledGetDataFromApi', () => {
     });
 
     test('should perform request to correct provided url', async () => {
-      const relativePath = '/posts';
       const resultPromise = throttledGetDataFromApi(relativePath);
       expect(axiosInstance.get).not.toHaveBeenCalled();
       jest.advanceTimersByTime(THROTTLE_TIME);
@@ -46,7 +46,7 @@ describe('throttledGetDataFromApi', () => {
     });
 
     test('should return response data', async () => {
-      const resultPromise = throttledGetDataFromApi('/posts');
+      const resultPromise = throttledGetDataFromApi(relativePath);
       jest.advanceTimersByTime(THROTTLE_TIME);
       const result = await resultPromise;
       expect(result).toEqual(responseData.data);
